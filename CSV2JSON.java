@@ -4,63 +4,35 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 public class CSV2JSON {
-    public static boolean isInteger(String data_)
-    {
-        try{
-            int a = Integer.parseInt(data_);
-            return true;
-        }
-        catch(NumberFormatException e){
-            return false;
-
-        }
+    
+    static void processFilesForValidation() {
 
     }
 
-
-
-    public static void writeToJSON(String payload, String fileName) throws FileNotFoundException {
-    PrintWriter pw = new PrintWriter(fileName);
-    pw.write(payload);
-    pw.close();
-    System.out.println("Written");
-  }
     public static void main(String[] args) {
-        Scanner input;
-        String s;
+        Scanner currentFile;
+        String attributeString;
+        
+        String fileName = "car_rental.csv";
         try{
-            input = new Scanner(new FileInputStream("car_maintanence.csv"));
-            // while(input.hasNextLine()){
-            //     s = input.nextLine();
-            //     System.out.println(s);
-
-            // }
-            s = input.nextLine();
-            String [] attributes = s.split(",");
+            currentFile = new Scanner(new FileInputStream(fileName));
+            attributeString = currentFile.nextLine();
+            String [] attributes = attributeString.split(",");
             String json_data="";
             json_data = json_data + "[";
 
-            while(input.hasNextLine())
+            while(currentFile.hasNextLine())
             {
                 json_data = json_data + "\n\t{";
-                s=input.nextLine();
-                String[] data = s.split(",");
+                attributeString=currentFile.nextLine();
+                String[] data = attributeString.split(",");
                 for(int i=0; i<attributes.length; i++){
                     if(isInteger(data[i]))
-                    {
-                        int a = Integer.parseInt(data[i]);
-                        // json_data = json_data +"   "+"\""+ attributes[i]+"\""+": "+a+"\n";
                         json_data = json_data +"\n\t\t\""+ attributes[i]+"\": "+data[i]+",";
-                    }
-                    else{
-                        // json_data = json_data +"   "+"\""+ attributes[i]+"\""+": "+"\""+data[i]+"\","+"\n";
+                    else
                         json_data = json_data +"\n\t\t\""+ attributes[i]+"\": \""+data[i]+"\",";
-
-                    }
                 }
-                
-                // json_data = json_data +"\n\t\t\""+ attributes[i]+"\": \""+data[i]+"\",";
-                
+
                 // Remove comma after last attribute
                 json_data = json_data.substring(0, json_data.length()-1)+"\n";
                 
@@ -79,4 +51,38 @@ public class CSV2JSON {
         }
 
     }
+
+    // Helper Functions
+    static boolean isInteger(String data_)
+    {
+        try{
+            Integer.parseInt(data_);
+            return true;
+        }
+        catch(NumberFormatException e){
+            return false;
+        }
+
+    }
+    
+    static String[] splitWithCommas(String delimitter, String input) {
+        String[] entries = input.split(",");
+
+        return entries;
+    }
+
+    static void writeToJSON(String payload, String fileName) throws FileNotFoundException {
+        PrintWriter pw = new PrintWriter(fileName);
+        pw.write(payload);
+        pw.close();
+        System.out.println("Written");
+    }
+}
+
+class CSVFileInvalidException extends Exception {
+
+}
+
+class CSVDataMissing extends Exception {
+
 }
