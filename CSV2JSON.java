@@ -3,7 +3,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-public class main {
+public class CSV2JSON {
     public static void writeToJSON(String payload, String fileName) throws FileNotFoundException {
     PrintWriter pw = new PrintWriter(fileName);
     pw.write(payload);
