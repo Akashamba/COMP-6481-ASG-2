@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 
 public class main {
     public static void writeToJSON(String payload, String fileName) throws FileNotFoundException {
-    PrintWriter pw = new PrintWriter("Car Rental Record.json");
+    PrintWriter pw = new PrintWriter(fileName);
     pw.write(payload);
     pw.close();
     System.out.println("Written");
