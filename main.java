@@ -23,23 +23,24 @@ public class main {
             s = input.nextLine();
             String [] attributes = s.split(",");
             String json_data="";
-            json_data = json_data + "["+"\n";
+            json_data = json_data + "[";
 
             while(input.hasNextLine())
             {
-                json_data = json_data + " {\n";
+                json_data = json_data + "\n\t{";
                 s=input.nextLine();
                 String[] data = s.split(",");
-                for(int i=0; i<attributes.length; i++){
-                    json_data = json_data +"   "+ attributes[i]+":"+data[i]+"\n";
-                    
-                    // System.out.print(json_data);
-                }
-                json_data = json_data + " }\n";
-                // System.out.print(json_data);
+                for(int i=0; i<attributes.length; i++)
+                    json_data = json_data +"\n\t\t\""+ attributes[i]+"\": \""+data[i]+"\",";
                 
-
+                // Remove comma after last attribute
+                json_data = json_data.substring(0, json_data.length()-1)+"\n";
+                
+                json_data = json_data + "\t},";
             }
+            // Remove comma after last record
+            json_data = json_data.substring(0, json_data.length()-1)+"\n";
+
             json_data = json_data+"]";
             System.out.println(json_data);
             writeToJSON(json_data, "ABC.json");
