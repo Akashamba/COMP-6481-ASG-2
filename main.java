@@ -1,8 +1,15 @@
 import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 public class main {
+    public static void writeToJSON(String payload, String fileName) throws FileNotFoundException {
+    PrintWriter pw = new PrintWriter("Car Rental Record.json");
+    pw.write(payload);
+    pw.close();
+    System.out.println("Written");
+  }
     public static void main(String[] args) {
         Scanner input;
         String s;
