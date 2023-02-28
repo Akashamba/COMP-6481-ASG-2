@@ -22,9 +22,27 @@ public class main {
             // }
             s = input.nextLine();
             String [] attributes = s.split(",");
-            for(int i=0; i<attributes.length; i++){
-                System.out.println(attributes[i]);
+            String json_data="";
+            json_data = json_data + "["+"\n";
+
+            while(input.hasNextLine())
+            {
+                json_data = json_data + " {\n";
+                s=input.nextLine();
+                String[] data = s.split(",");
+                for(int i=0; i<attributes.length; i++){
+                    json_data = json_data +"   "+ attributes[i]+":"+data[i]+"\n";
+                    
+                    // System.out.print(json_data);
+                }
+                json_data = json_data + " }\n";
+                // System.out.print(json_data);
+                
+
             }
+            json_data = json_data+"]";
+            System.out.println(json_data);
+            writeToJSON(json_data, "ABC.json");
         }
         catch(FileNotFoundException e){
             System.out.println("File not found");
