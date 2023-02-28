@@ -4,6 +4,21 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 public class CSV2JSON {
+    public static boolean isInteger(String data_)
+    {
+        try{
+            int a = Integer.parseInt(data_);
+            return true;
+        }
+        catch(NumberFormatException e){
+            return false;
+
+        }
+
+    }
+
+
+
     public static void writeToJSON(String payload, String fileName) throws FileNotFoundException {
     PrintWriter pw = new PrintWriter(fileName);
     pw.write(payload);
@@ -14,7 +29,7 @@ public class CSV2JSON {
         Scanner input;
         String s;
         try{
-            input = new Scanner(new FileInputStream("car_rental.csv"));
+            input = new Scanner(new FileInputStream("car_maintanence.csv"));
             // while(input.hasNextLine()){
             //     s = input.nextLine();
             //     System.out.println(s);
@@ -30,8 +45,21 @@ public class CSV2JSON {
                 json_data = json_data + "\n\t{";
                 s=input.nextLine();
                 String[] data = s.split(",");
-                for(int i=0; i<attributes.length; i++)
-                    json_data = json_data +"\n\t\t\""+ attributes[i]+"\": \""+data[i]+"\",";
+                for(int i=0; i<attributes.length; i++){
+                    if(isInteger(data[i]))
+                    {
+                        int a = Integer.parseInt(data[i]);
+                        // json_data = json_data +"   "+"\""+ attributes[i]+"\""+": "+a+"\n";
+                        json_data = json_data +"\n\t\t\""+ attributes[i]+"\": "+data[i]+",";
+                    }
+                    else{
+                        // json_data = json_data +"   "+"\""+ attributes[i]+"\""+": "+"\""+data[i]+"\","+"\n";
+                        json_data = json_data +"\n\t\t\""+ attributes[i]+"\": \""+data[i]+"\",";
+
+                    }
+                }
+                
+                // json_data = json_data +"\n\t\t\""+ attributes[i]+"\": \""+data[i]+"\",";
                 
                 // Remove comma after last attribute
                 json_data = json_data.substring(0, json_data.length()-1)+"\n";
