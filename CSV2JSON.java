@@ -69,7 +69,7 @@ public class CSV2JSON {
                 {
                     attributeString = attributeString+" ";
                 }
-                attributes = attributeString.split(",");
+                attributes = splitIgnoreInQuotes(",", attributeString);
                 try
                 {
                     processFilesForValidation(attributes, data, fileName, 0);
@@ -98,7 +98,7 @@ public class CSV2JSON {
                     {
                         attributeString = attributeString+" ";
                     }
-                    data = attributeString.split(",");
+                    data = splitIgnoreInQuotes(",", attributeString);
                     try
                     {
                         processFilesForValidation(attributes, data, fileName, linenumber);
@@ -246,11 +246,55 @@ public class CSV2JSON {
         }
 
     }
-    
-    static String[] splitWithCommas(String delimitter, String input) {
-        String[] entries = input.split(",");
 
-        return entries;
+    // Function to split string by given delimitter, but ignore instances that occur within quotes
+    static String[] splitIgnoreInQuotes(String delimitter, String input) {
+        String[] entries = input.split(",");
+        int[] ignoreIndices = new int[entries.length/2];
+        int ignoreCount = 0;
+
+        for (int i=0; i<ignoreIndices.length; i++)
+            ignoreIndices[i] = -1;
+
+        for (int i=0; i<entries.length-1; i++) {
+            if (entries[i] != "" && substringCount(entries[i], "\"")%2 == 1) {
+                int mergeCount = 1;
+                while (substringCount(entries[i+mergeCount], "\"")%2 == 0)
+                    mergeCount++;
+
+                for (int j=0; j<mergeCount; j++) {
+                    entries[i] += ","+entries[i+j+1];
+                    entries[i+j+1] = "";
+                    ignoreIndices[ignoreCount] = i+j+1;
+                    ignoreCount++;
+                }
+            }
+        }
+        
+        String[] finalEntries = new String[entries.length-ignoreCount];
+        int ignoreIndex = 0;
+        int finalIndex = 0;
+        for (int i=0; i<entries.length; i++) {
+            if (i!=ignoreIndices[ignoreIndex]) {
+                entries[i] = entries[i].replace("\"", "");
+                finalEntries[finalIndex] = entries[i];
+                finalIndex++;
+            } else {
+                ignoreIndex++;
+            }
+        }
+
+        return finalEntries;
+    }
+
+    static int substringCount(String str, String key) {
+        int count = 0;
+        for (String s : str.split("")) {
+            if (s.equals(key)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     static void writeToJSON(String payload, String fileName) throws FileNotFoundException {
