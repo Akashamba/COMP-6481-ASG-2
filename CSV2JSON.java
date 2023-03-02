@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
 public class CSV2JSON {
@@ -77,7 +78,7 @@ public class CSV2JSON {
                 catch(CSVFileInvalidException e)
                 {
                     new CSVFileInvalidException(attributes, fileName);
-                    System.exit(0);
+                    continue;
                 }
                 catch(CSVDataMissing e)
                 {
@@ -321,24 +322,37 @@ class CSVFileInvalidException extends Exception
                      
             }
         }
+
         if(missing_attribute>0)
         {
+            PrintWriter log = null;
+            String logString = "";
+            try {
+                log = new PrintWriter(new FileOutputStream("log.txt"));
+            } catch (FileNotFoundException e) {
+                System.out.println("Log file not found");
+            }
+
             System.out.println("File "+file+" is invalid: field is missing");
             System.out.println("File is not converted to JSON");
-            System.out.println("Missing field: "+(attributes.length-missing_attribute)+" detected, "+missing_attribute+" missing");
+
+            logString+="File "+file+" is invalid.\n";
+            logString+="Missing field: " + (attributes.length-missing_attribute)+" detected," + missing_attribute + " missing\n";
             for(k=0; k<attributes.length; k++)
             {
                 if(k==(attributes.length-1))
                 {
-                    System.out.print(attributes[k]);
+                    logString+=attributes[k]+"\n";
                 }
                 else
                 {
-                    System.out.print(attributes[k]+",");
+                    logString+=attributes[k]+",";
 
                 }
                 
             }
+            log.println(logString+"\n\n");
+            log.close();
         }
     }
 }
@@ -359,32 +373,40 @@ class CSVDataMissing extends Exception {
         }
         if(missing_attribute>0)
         {
+
+            PrintWriter log = null;
+            String logString = "";
+            try {
+                log = new PrintWriter(new FileOutputStream("log.txt"));
+            } catch (FileNotFoundException e) {
+                System.out.println("Log file not found");
+            }
+
             System.out.println("In File "+file+" line" +linenumber +" not converted to json: missing data");
-            System.out.println("In file "+file+" line"+ linenumber);
+            logString+="In file "+file+" line"+ linenumber+"\n";
             for(k=0; k<data.length; k++)
             {
                 if(k==(data.length-1))
                 {
-                    System.out.println(data[k]);
+                    logString+=data[k]+"\n";
                 }
                 else
                 {
-                    System.out.print(data[k]+",");
+                    logString+=data[k]+",";
 
                 }
                 
             }
-            System.out.print("Missing: ");
+            logString+="Missing: ";
             for(k=0; k<attributes.length; k++){
                 if(data[k].equals("***")){
-                    System.out.print(attributes[k]);
-
+                    logString+=attributes[k];
                 }
             }
-            System.out.println();
+
+            log.println(logString+"\n\n");
+            log.close();
         }
-
-
     }
 
 }
