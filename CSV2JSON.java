@@ -2,6 +2,8 @@ import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 public class CSV2JSON {
@@ -328,9 +330,12 @@ class CSVFileInvalidException extends Exception
             PrintWriter log = null;
             String logString = "";
             try {
-                log = new PrintWriter(new FileOutputStream("log.txt"));
+                log = new PrintWriter(new FileWriter("log.txt", true));
             } catch (FileNotFoundException e) {
                 System.out.println("Log file not found");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
 
             System.out.println("File "+file+" is invalid: field is missing");
@@ -351,7 +356,7 @@ class CSVFileInvalidException extends Exception
                 }
                 
             }
-            log.println(logString+"\n\n");
+            log.println(logString);
             log.close();
         }
     }
@@ -377,9 +382,12 @@ class CSVDataMissing extends Exception {
             PrintWriter log = null;
             String logString = "";
             try {
-                log = new PrintWriter(new FileOutputStream("log.txt"));
+                log = new PrintWriter(new FileWriter("log.txt", true));
             } catch (FileNotFoundException e) {
                 System.out.println("Log file not found");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
 
             System.out.println("In File "+file+" line" +linenumber +" not converted to json: missing data");
@@ -404,7 +412,7 @@ class CSVDataMissing extends Exception {
                 }
             }
 
-            log.println(logString+"\n\n");
+            log.println(logString);
             log.close();
         }
     }
