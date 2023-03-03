@@ -1,7 +1,6 @@
 import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -50,14 +49,16 @@ public class CSV2JSON {
         String attributeString;
         String[] attributes;
         String[] data={};
+
         System.out.println("How many files do you want to process? ");
-        String number_of_files_ = input.nextLine();
-        int number_of_files = Integer.parseInt(number_of_files_);
+        int number_of_files = Integer.parseInt(input.nextLine());
+        
         String[] files = new String[number_of_files];
         System.out.println("Enter the name of the files");
         for(int m=0; m<number_of_files; m++)
         {
             String file_name = input.nextLine();
+            
             files[m] = file_name;
         }
         for(int m=0; m<files.length; m++)
@@ -234,6 +235,7 @@ public class CSV2JSON {
         //     System.out.println("File not found");
 
         // }
+        input.close();
     }
 
     // Helper Functions
@@ -254,36 +256,42 @@ public class CSV2JSON {
         String[] entries = input.split(",");
         int[] ignoreIndices = new int[entries.length/2];
         int ignoreCount = 0;
+        String[] finalEntries = null;
 
         for (int i=0; i<ignoreIndices.length; i++)
             ignoreIndices[i] = -1;
 
-        for (int i=0; i<entries.length-1; i++) {
-            if (entries[i] != "" && substringCount(entries[i], "\"")%2 == 1) {
-                int mergeCount = 1;
-                while (substringCount(entries[i+mergeCount], "\"")%2 == 0)
-                    mergeCount++;
+        try {
+            for (int i=0; i<entries.length-1; i++) {
+                if (entries[i] != "" && substringCount(entries[i], "\"")%2 == 1) {
+                    int mergeCount = 1;
+                    while (substringCount(entries[i+mergeCount], "\"")%2 == 0)
+                        mergeCount++;
 
-                for (int j=0; j<mergeCount; j++) {
-                    entries[i] += ","+entries[i+j+1];
-                    entries[i+j+1] = "";
-                    ignoreIndices[ignoreCount] = i+j+1;
-                    ignoreCount++;
+                    for (int j=0; j<mergeCount; j++) {
+                        entries[i] += ","+entries[i+j+1];
+                        entries[i+j+1] = "";
+                        ignoreIndices[ignoreCount] = i+j+1;
+                        ignoreCount++;
+                    }
                 }
             }
-        }
         
-        String[] finalEntries = new String[entries.length-ignoreCount];
-        int ignoreIndex = 0;
-        int finalIndex = 0;
-        for (int i=0; i<entries.length; i++) {
-            if (i!=ignoreIndices[ignoreIndex]) {
-                entries[i] = entries[i].replace("\"", "");
-                finalEntries[finalIndex] = entries[i];
-                finalIndex++;
-            } else {
-                ignoreIndex++;
+            finalEntries = new String[entries.length-ignoreCount];
+            int ignoreIndex = 0;
+            int finalIndex = 0;
+            for (int i=0; i<entries.length; i++) {
+                if (i!=ignoreIndices[ignoreIndex]) {
+                    entries[i] = entries[i].replace("\"", "");
+                    finalEntries[finalIndex] = entries[i];
+                    finalIndex++;
+                } else {
+                    ignoreIndex++;
+                }
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Please check to enure that the CSV file has commas");
+            System.exit(0);
         }
 
         return finalEntries;
@@ -411,7 +419,7 @@ class CSVDataMissing extends Exception {
                 }
             }
 
-            log.println(logString);
+            log.println(logString+"\n");
             log.close();
         }
     }
