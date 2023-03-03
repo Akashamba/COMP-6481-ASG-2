@@ -7,13 +7,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class CSV2JSON {
-    static int call = 0;
-    static void processFilesForValidation(String[] attributes,String[] data, String filename, int linenumber) throws CSVFileInvalidException, CSVDataMissing {
+    static void processFilesForValidation(String[] attributes,String[] data, String filename, int linenumber, int count) throws CSVFileInvalidException, CSVDataMissing 
+    {
         String file = filename;
         int k;
-        if(call == 0)
+        if(count == 0)
         {
-            call++;
             for(k=0; k<attributes.length; k++)
             {
                 if(attributes[k].length() == 0  || attributes[k].equals(" "))
@@ -27,7 +26,7 @@ public class CSV2JSON {
             }
 
         }
-        else{
+        if(count==1){
             for(k=0; k<data.length; k++)
             {
                 if(data[k].length() == 0  || data[k].equals(" "))
@@ -75,7 +74,7 @@ public class CSV2JSON {
                 attributes = splitIgnoreInQuotes(",", attributeString);
                 try
                 {
-                    processFilesForValidation(attributes, data, fileName, 0);
+                    processFilesForValidation(attributes, data, fileName, 0,0);
                 }
                 catch(CSVFileInvalidException e)
                 {
@@ -104,7 +103,7 @@ public class CSV2JSON {
                     data = splitIgnoreInQuotes(",", attributeString);
                     try
                     {
-                        processFilesForValidation(attributes, data, fileName, linenumber);
+                        processFilesForValidation(attributes, data, fileName, linenumber,1);
                     }
                     catch(CSVDataMissing e)
                     {
